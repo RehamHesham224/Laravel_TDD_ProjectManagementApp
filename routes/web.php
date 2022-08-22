@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectTasksController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +18,22 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Route::resource('projects',ProjectController::class)->only(['store','index','show']);
+Route::middleware(['auth'])->group(function () {
+    Route::get('projects',[ProjectController::class,'index']);
+    Route::get('projects/create',[ProjectController::class,'create']);
+    Route::get('projects/{project}',[ProjectController::class,'show']);
+    Route::get('projects/{project}/edit',[ProjectController::class,'edit']);
+    Route::patch('projects/{project}',[ProjectController::class,'update']);
+    Route::post('projects',[ProjectController::class,'store']);
+    
+    
+
+    Route::post('/projects/{project}/tasks',[ProjectTasksController::class,'store']);
+    Route::patch('/projects/{project}/tasks/{task}',[ProjectTasksController::class,'update']);
+});
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
