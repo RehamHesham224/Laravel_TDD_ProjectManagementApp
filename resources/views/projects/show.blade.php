@@ -38,8 +38,7 @@
         @method('PATCH')
         <textarea type="text"  placeholder="Add A Task" name="notes">{{$project->notes}}</textarea>
         <button type="submit">Save</button>
-      </form>
-      @if ($errors->any())
+        @if ($errors->any())
       <div class="alert alert-danger">
           <ul>
               @foreach ($errors->all() as $error)
@@ -48,6 +47,12 @@
           </ul>
       </div>
   @endif
+      </form>
+      @if ($project->notes)
+      <p>{{$project->notes}}</p>
+      @endif
+
+      
 
 </body>
 </html>

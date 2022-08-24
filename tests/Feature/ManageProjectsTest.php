@@ -14,24 +14,6 @@ class ManageProjectsTest extends TestCase
     use WithFaker , RefreshDatabase ;
 
 
-    // /** @test */
-    // public function guests_cannot_create_project(){
-    //     // $attributes=Project::factory()->raw(['owner_id'=>null]);
-    //     // $this->post('projects',[$attributes])->assertSessionHasErrors('owner_id');
-
-    //     $attributes=Project::factory()->raw();
-    //     $this->post('projects',[$attributes])->assertRedirect('login');
-    // }
-    // /** @test */
-    // public function guests_cannot_view_project(){
-    //     $this->get('projects')->assertRedirect('login');
-    // }
-    //  /** @test */
-    //  public function guests_cannot_view_a_single_project(){
-    //     $project=Project::factory()->create();
-    //     $this->get($project->path())->assertRedirect('login');
-    // }
-
     /** @test */
     public function guests_cannot_manage_project(){
         $project=Project::factory()->create();
@@ -46,12 +28,7 @@ class ManageProjectsTest extends TestCase
 
     /** @test */
     public function a_user_can_create_a_project(){
-        //post data 
-        //save in database
-        //show in view
-        //redirect
-        //migration -> model -> controller ->view 
-        // $this->withoutExceptionHandling();
+        
         $this->signIn();
 
         $this->get('/projects/create')->assertStatus(200);
@@ -90,6 +67,18 @@ class ManageProjectsTest extends TestCase
 
 
      }
+     
+     /** @test */
+     public function a_user_can_update_a_project_general_notes(){
+        $project =ProjectFactory::create();
+
+
+        $this->actingAs($project->owner)
+            ->patch($project->path(),$attributes=["notes"=>"changed"])
+            ->assertRedirect($project->path());
+
+        $this->assertDatabaseHas('projects', $attributes);
+     }
 
      /** @test */
      public function a_user_can_view_their_project(){
@@ -117,21 +106,21 @@ class ManageProjectsTest extends TestCase
         ->assertStatus(403);
 
      }
-    /** @test */
-    public function a_project_requires_a_title(){
-        //raw -> create as array
-        //make -> make but not save
-        //create -> create as object
+    // /** @test */
+    // public function a_project_requires_a_title(){
+    //     //raw -> create as array
+    //     //make -> make but not save
+    //     //create -> create as object
 
-        $this->signIn();
-        $attributes=Project::factory()->raw(['title'=>'']);
-        $this->post('projects',[$attributes])->assertSessionHasErrors('title');
-    }
-     /** @test */
-     public function a_project_requires_a_description(){
-        $this->signIn();
-        $attributes=Project::factory()->raw(['description'=>'']);
-        $this->post('projects',[$attributes])->assertSessionHasErrors('description');
-    }
+    //     $this->signIn();
+    //     $attributes=Project::factory()->raw(['title'=>'']);
+    //     $this->post('projects',[$attributes])->assertSessionHasErrors('title');
+    // }
+    //  /** @test */
+    //  public function a_project_requires_a_description(){
+    //     $this->signIn();
+    //     $attributes=Project::factory()->raw(['description'=>'']);
+    //     $this->post('projects',[$attributes])->assertSessionHasErrors('description');
+    // }
 
 }
