@@ -34,6 +34,11 @@ class ProjectController extends Controller
     public function update(UpdateProjectRequest $request){
         return redirect($request->save()->path());
     }
+    public function destroy(Project $project){
+        $this->authorize('update',$project);
+        $project->delete();
+        return redirect('/projects');
+    }
 
     protected function validating(){
         return request()->validate([

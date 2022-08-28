@@ -13,7 +13,11 @@
         <li><a href="{{$project->path()}}">{{$project['title']}}</a></li>
         <li> {{$project['description']}}</li>
 
-       
+       <form action="{{$project->path()}}" method="post">
+        @method('DELETE')
+        @csrf
+        <button type="submit">Delete</button>
+      </form>
     @empty
       <li> No Projects Yet.</li>
     @endforelse

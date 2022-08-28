@@ -4,27 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Task extends Model
 {
-    use HasFactory;
+    use HasFactory ,RecordActivity;
     protected $guarded =[];
     protected $touches=['project'];
     protected $casts=['completed'=>'boolean'];
+    protected static $recordableEvents=['created','deleted'];
 
-
-    public static function boot(){
-        parent::boot();
-       
-        static::created(function($task){
-            $task->project->recordActivity('Created Task');
-            
-        });
-    }
     public function complete(){
         
         $this->update(['completed'=>true]);
-        $this->project->recordActivity('Completed Task');
+        $this->recordActivity('completed_task');
+    }
+    public function incomplete(){
+        
+        $this->update(['completed'=>false]);
+        $this->recordActivity('incompleted_task');
     }
 
     public function project(){
@@ -33,6 +31,6 @@ class Task extends Model
     public function path(){
         return "/projects/{$this->project->id }/tasks/{$this->id}" ; 
     }
-
+  
 
 }

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory , RecordActivity;
     protected $guarded=[];
 
     public function path(){
@@ -17,19 +18,13 @@ class Project extends Model
         return $this->belongsTo(User::class);
     }
     public function tasks(){
-        return $this->hasMany(Task::class );
+        return $this->hasMany(Task::class )->latest();
     }
     public function addTask($body){
         return $this->tasks()->create(compact('body'));
     }
     public function activity(){
         return $this->hasMany(Activity::class);
-    }
-    public function recordActivity($type){
-        Activity::create([
-            'project_id'=>$this->id,
-            'description'=>$type
-        ]);
     }
 
 }

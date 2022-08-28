@@ -51,8 +51,8 @@
       @if ($project->notes)
       <p>{{$project->notes}}</p>
       @endif
-
-      
+   @include('projects.activity')
+     
 
 </body>
 </html>
