@@ -1,4 +1,6 @@
-   
+<div class="card mb-4">
+<div class="card-body fw-light">
+
 @if($project->activity)
 @foreach($project->activity as $activity)
 
@@ -10,3 +12,6 @@
    </div>
 @endforeach
 @endif
+
+</div>
+</div>

@@ -20,11 +20,21 @@ class Project extends Model
     public function tasks(){
         return $this->hasMany(Task::class )->latest();
     }
+    public function addTasks($tasks){
+        return $this->tasks()->createMany($tasks);
+    }
     public function addTask($body){
         return $this->tasks()->create(compact('body'));
     }
     public function activity(){
         return $this->hasMany(Activity::class);
     }
+    public function invite(User $user){
+        return $this->members()->attach($user);
+    }
+    public function members(){
+        return $this->belongsToMany(User::class ,'project_members')->withTimestamps();
+    }
+    
 
 }

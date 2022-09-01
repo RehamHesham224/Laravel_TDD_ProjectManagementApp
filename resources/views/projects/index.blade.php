@@ -1,26 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-   <ul>
+@extends('layouts.app')
+@section('content')
+ <div class="container">
+  <ul>
    
     @forelse ($projects as $project)
-        <li><a href="{{$project->path()}}">{{$project['title']}}</a></li>
-        <li> {{$project['description']}}</li>
+        <div class="d-flex justify-content-between">  
+          <h3><a  class="text-decoration-none text-muted" href="{{$project->path()}}">{{$project['title']}}</a></h3>
+          <form action="{{$project->path()}}" method="post">
+            @method('DELETE')
+            @csrf
+            <button class="btn btn-danger" type="submit">Delete</button>
+          </form>
+        </div>
+        <p> {{str_limit($project['description'])}}</p>
 
-       <form action="{{$project->path()}}" method="post">
-        @method('DELETE')
-        @csrf
-        <button type="submit">Delete</button>
-      </form>
+      
     @empty
       <li> No Projects Yet.</li>
     @endforelse
    </ul>
-</body>
-</html>
+ </div>
+@endsection

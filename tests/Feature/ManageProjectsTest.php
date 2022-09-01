@@ -33,22 +33,17 @@ class ManageProjectsTest extends TestCase
 
         $this->get('/projects/create')->assertStatus(200);
 
-        $attributes=[
-            'title'=>$this->faker->sentence,
-            'description'=>$this->faker->paragraph,
-            'notes'=>"General Notes"
-        ];
-        $response=$this->post('/projects',$attributes);
-        $project=Project::where($attributes)->first();
-        $response->assertRedirect($project->path());
-
-        $this->assertDatabaseHas('projects',$attributes);
-
-        // $this->get('/projects')->assertSee($attributes['title']);
-        $this->get($project->path())
+       $this->followingRedirects()->post('/projects',$attributes=Project::factory()->raw())
         ->assertSee($attributes['title'])
         ->assertSee($attributes['description'])
         ->assertSee($attributes['notes']);
+
+    }
+     /** @test */
+    function a_user_see_all_project_they_have_been_invited_to_on_their_dashboard(){
+        $project=tap(ProjectFactory::create())->invite($this->signIn());
+        $this->get('projects')
+        ->assertSee($project->title);
 
     }
       /** @test */
@@ -61,10 +56,17 @@ class ManageProjectsTest extends TestCase
         $this->delete($project->path())
             ->assertRedirect('/login');
 
-        $this->signIn();
+        $user=$this->signIn();
+
         $this->delete($project->path())
             ->assertStatus(403);
 
+
+        $project->invite($user);
+
+        $this->actingAs($user)
+        ->delete($project->path())
+        ->assertStatus(403);
         // $this->assertDatabaseMissing('projects',$project->only('id'));
 
     }
@@ -137,21 +139,21 @@ class ManageProjectsTest extends TestCase
         ->assertStatus(403);
 
      }
-    // /** @test */
-    // public function a_project_requires_a_title(){
-    //     //raw -> create as array
-    //     //make -> make but not save
-    //     //create -> create as object
-
-    //     $this->signIn();
-    //     $attributes=Project::factory()->raw(['title'=>'']);
-    //     $this->post('projects',[$attributes])->assertSessionHasErrors('title');
-    // }
+    /** @test */
+    public function a_project_requires_a_title(){
+        $this->withoutExceptionHandling();
+        $this->signIn();
+        $attributes=Project::factory()->raw(['title'=>'']);
+        $this->post('projects',[$attributes])->assertSessionHasErrors('title');
+    }
     //  /** @test */
     //  public function a_project_requires_a_description(){
     //     $this->signIn();
     //     $attributes=Project::factory()->raw(['description'=>'']);
     //     $this->post('projects',[$attributes])->assertSessionHasErrors('description');
     // }
+
+   
+   
 
 }

@@ -19,6 +19,9 @@ class ProjectPolicy
         //
     }
     public function update($user, $project){
-        return $user->is($project->owner);
+        return $user->is($project->owner) || $project->members->contains($user);
+    }
+    public function manage($user, $project){
+        return $user->is($project->owner) ;
     }
 }

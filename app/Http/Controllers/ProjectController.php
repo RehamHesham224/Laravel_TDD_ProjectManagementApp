@@ -10,8 +10,9 @@ class ProjectController extends Controller
 {
     //
     public function index(){
-        $projects =auth()->user()->projects;
+        // $projects =auth()->user()->projects;
         // dd($projects);
+        $projects =auth()->user()->accessibleProjects();
         return view('projects.index',compact('projects'));
     }
     public function show(Project $project){
@@ -25,6 +26,9 @@ class ProjectController extends Controller
     public function store(){
         $this->validating();
         $project=auth()->user()->projects()->create($this->validating());
+        if($tasks=request('tasks')){
+            $project->addTasks($tasks);
+        }
         return redirect($project->path());
     }
     public function edit(Project $project){
@@ -35,7 +39,7 @@ class ProjectController extends Controller
         return redirect($request->save()->path());
     }
     public function destroy(Project $project){
-        $this->authorize('update',$project);
+        $this->authorize('manage',$project);
         $project->delete();
         return redirect('/projects');
     }
